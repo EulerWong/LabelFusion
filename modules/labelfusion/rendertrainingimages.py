@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import scipy.misc
+from navpy import quat2dcm
 import matplotlib.cm as cm
 import yaml
 
@@ -14,6 +15,7 @@ from director import visualization as vis
 from director import objectmodel as om
 
 from . import utils
+from navpy import quat2dcm
 
 
 class RenderTrainingImages(object):
@@ -273,7 +275,18 @@ class RenderTrainingImages(object):
                 objToCamera = transformUtils.concatenateTransforms([objToCameraStart, cameraStartToCamera])
                 pose = transformUtils.poseFromTransform(objToCamera)
                 poseAsList = [pose[0].tolist(), pose[1].tolist()]
-                target.write("  pose_data: " + str(poseAsList))
+
+                #Write T Matrix
+                target.write("  cam_R_m2c: " + str(pose[0].tolist()))
+                target.write("\n")
+
+                #Write R Matrix && Get Rotation Matrix
+                p = pose[1].tolist()
+                C = quat2dcm(p[0], p[1:4])
+                target.write("  cam_t_m2c: " + str(c[:0].tolist()))
+                target.write(str(c[:1].tolist()))
+                target.write(str(c[:2].tolist()))
+
                 target.write("\n")
 
         target.close()
