@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import scipy.misc
-from navpy import quat2dcm
 import matplotlib.cm as cm
 import yaml
 
@@ -13,9 +12,9 @@ from director import screengrabberpanel as sgp
 from director import transformUtils
 from director import visualization as vis
 from director import objectmodel as om
-
+from pyquaternion import Quaternion
 from . import utils
-from navpy import quat2dcm
+#from scipy.spatial.transform import Rotation as R
 
 
 class RenderTrainingImages(object):
@@ -274,20 +273,22 @@ class RenderTrainingImages(object):
                 objToCameraStart = self.objectToWorld[objectName]
                 objToCamera = transformUtils.concatenateTransforms([objToCameraStart, cameraStartToCamera])
                 pose = transformUtils.poseFromTransform(objToCamera)
-                poseAsList = [pose[0].tolist(), pose[1].tolist()]
-
+                
                 #Write T Matrix
                 target.write("  cam_R_m2c: " + str(pose[0].tolist()))
                 target.write("\n")
 
-                #Write R Matrix && Get Rotation Matrix
-                p = pose[1].tolist()
-                C = quat2dcm(p[0], p[1:4])
-                target.write("  cam_t_m2c: " + str(c[:0].tolist()))
-                target.write(str(c[:1].tolist()))
-                target.write(str(c[:2].tolist()))
-
+                print "cam_R_m2c:\n"
+                print pose
+                
+                q7 = Quaternion(pose[1])
+                c = q7.rotation_matrix                
+                target.write("  cam_t_m2c: " + str(c.flatten().tolist()))
                 target.write("\n")
+
+                print "cam_t_m2c:\n"
+                print pose
+                print "\n"
 
         target.close()
                 
@@ -306,6 +307,7 @@ def getCameraTransform(camera):
               camera.GetFocalPoint(),
               camera.GetPosition(),
               camera.GetViewUp())
+
 
 def setCameraTransform(camera, transform):
     '''Set camera transform so that view direction is +Z and view up is -Y'''
