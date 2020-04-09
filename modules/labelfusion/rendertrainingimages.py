@@ -273,7 +273,7 @@ class RenderTrainingImages(object):
                 objToCamera = transformUtils.concatenateTransforms([objToCameraStart, cameraStartToCamera])
                 pose = transformUtils.poseFromTransform(objToCamera)
                 poseAsList = [pose[0].tolist(), pose[1].tolist()]
-                target.write("  pose: " + str(poseAsList))
+                target.write("  pose_data: " + str(poseAsList))
                 target.write("\n")
 
         target.close()
