@@ -35,7 +35,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git libsuitesparse-dev cmake-qt-gui build-essential libusb-1.0-0-dev libudev-dev \
     freeglut3-dev libglew-dev libeigen3-dev zlib1g-dev libjpeg-dev libopenni2-dev \
     gcc-5 g++-5 libxkbfile1 \
-    pip install --upgrade pip && pip install pillow
+    pip install --upgrade pip && pip install pillow && pip install pyquaternion
 
 RUN apt-get install -y libnotify4 libsecret-1-0
 RUN apt-get install -y gedit libvtk-java wget
