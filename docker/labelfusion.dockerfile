@@ -2,12 +2,18 @@ FROM ianre657/cuda8gl:latetest
 
 WORKDIR /root
 
+RUN apt-get update 
+RUN apt-get --reinstall install libcurl3-gnutls
+RUN apt-get install -y apt-transport-https apt-utils
 #COPY build_scripts /tmp/build_scripts
-
-RUN apt-get update && apt-get upgrade -y
+#RUN rm /etc/apt/sources.list
+#RUN wget http://security.debian.org/debian-security/pool/updates/main/a/apt/apt-transport-https_1.0.9.8.6_amd64.deb && dpkg -i apt-transport-https_1.0.9.8.6_amd64.deb
+RUN apt-get update 
+RUN apt-get upgrade -y
 # install_dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-utils \
+    && apt-get install apt-transport-https ca-certificates \
     && apt-get install  -y --no-install-recommends \
     \
     # basic packages
@@ -34,8 +40,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # dependency for ElasticFusion
     git libsuitesparse-dev cmake-qt-gui build-essential libusb-1.0-0-dev libudev-dev \
     freeglut3-dev libglew-dev libeigen3-dev zlib1g-dev libjpeg-dev libopenni2-dev \
-    gcc-5 g++-5 libxkbfile1 \
-    pip install --upgrade pip && pip install pillow && pip install pyquaternion
+    gcc-5 g++-5 libxkbfile1 
+    
 
 RUN apt-get install -y libnotify4 libsecret-1-0
 RUN apt-get install -y gedit libvtk-java wget
@@ -55,7 +61,7 @@ RUN ln -sf /usr/include/eigen3/Eigen /usr/include/Eigen && \
 
 # install asus xtion 2 driver
 RUN mkdir -p /etc/udev/rules.d/99-ASUS-video.rules
-COPY ./ASUS /root/ASUS/
+#COPY ./ASUS /root/ASUS/
 #RUN ls /root
 #RUN /root/ASUS/install.sh
 
@@ -108,6 +114,9 @@ RUN git clone -b pf-lm-debug-jpeg https://github.com/eulerwong/ElasticFusion.git
         && cmake ../src \
         && make -j$(nproc) -l$(nproc) \
         && cd ../.. \
+    && pip install --upgrade pip \
+    && pip install pyquaternion \
+    && pip install pillow \
     && cd GUI \
         && mkdir build && cd build \
         && cmake ../src \
